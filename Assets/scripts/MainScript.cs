@@ -26,6 +26,8 @@ public class MainScript : MonoBehaviour {
 	// function executed at each frame
 	
 	void Update () {
+		print ("hey");
+		print (Input.GetButtonDown ("Fire1"));
 		// mouse button down and the ninja is not jumping?
 		if (Input.GetButtonDown("Fire1") && !ninjaJumping) {
 			// let's place the power bar on the stage
@@ -37,17 +39,23 @@ public class MainScript : MonoBehaviour {
 			ninjaJumping = true;
 			// get the game object tagged as "Power"
 			GameObject main = GameObject.FindWithTag("Power");
-			// inside the object tagged as "Power", get PowerScript script
-			PowerScript script = main.GetComponent("PowerScript") as PowerScript;
-			// destoy the power bar
-			Destroy(GameObject.FindWithTag("Power"));
-			// find the object tagged as "Player" and send "Jump" message, with the proper force
-			GameObject.FindWithTag("Player").SendMessage("Jump",maxJumpForce*script.chargePower);
-			// get all objects tagged with "Pole"
-			GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
-			foreach (GameObject pole in poles){
-				// send them all "scroll" message
-				pole.SendMessage("scroll");
+			print (main);
+			if(main != null){
+				// inside the object tagged as "Power", get PowerScript script
+				PowerScript script = main.GetComponent("PowerScript") as PowerScript;
+				// destoy the power bar
+				Destroy(GameObject.FindWithTag("Power"));
+				// find the object tagged as "Player" and send "Jump" message, with the proper force
+				GameObject.FindWithTag("Player").SendMessage("Jump",maxJumpForce*script.chargePower);
+				// get all objects tagged with "Pole"
+				GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
+				foreach (GameObject pole in poles){
+					// send them all "scroll" message
+					pole.SendMessage("scroll");
+				}
+			}
+			else{
+				ninjaJumping = false;
 			}
 		}
 	}

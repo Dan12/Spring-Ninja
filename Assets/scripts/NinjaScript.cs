@@ -7,7 +7,7 @@ public class NinjaScript : MonoBehaviour {
 		// placing the ninja
 		transform.position = new Vector2(-2.5f, 2f);
 		// tagging it as "Player"
-		tag = "Player";
+		//tag = "Player";
 	}
 	
 	void Update(){

@@ -7,7 +7,7 @@ public class PowerScript : MonoBehaviour {
 	
 	void Start () {
 		// tagging the object as "Power"
-		tag = "Power";
+		//tag = "Power";
 		// horizontally scaling the object to zero
 		transform.localScale = new Vector2(0f,1f);
 	}

@@ -5,7 +5,7 @@ public class PoleScript : MonoBehaviour {
 
 	void Start () {
 		// tagging the object as Pole
-		gameObject.tag = "Pole";
+		//gameObject.tag = "Pole";
 	}
 	
 	void scroll(){
