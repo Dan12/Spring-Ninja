@@ -14,7 +14,7 @@ public class NinjaScript : MonoBehaviour {
 		// checking if the ninja falls down the stage, in this case restart the game
 		Vector2 stagePos = Camera.main.WorldToScreenPoint(transform.position);
 		if (stagePos.y < 0){
-			Application.LoadLevel(Application.loadedLevel);
+			GameObject.FindGameObjectsWithTag ("GameEngine") [0].SendMessage ("playerDied");
 		}
 		transform.position = new Vector2(-2.5f,transform.position.y);
 	}
@@ -28,10 +28,12 @@ public class NinjaScript : MonoBehaviour {
 			pole.SendMessage("scroll");
 		}
 	}
-	
+
 	void OnCollisionEnter2D(Collision2D collision){
-		if (collision.contacts [0].point.y >= collision.gameObject.transform.position.y)
+		if (gameObject.GetComponent<Rigidbody2D> ().velocity.y == 0) {
 			GameObject.FindGameObjectsWithTag ("GameEngine") [0].SendMessage ("pointEarned");
+			gameObject.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+		}
 		// get all objects tagged with "Pole"
 		GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
 		foreach (GameObject pole in poles){

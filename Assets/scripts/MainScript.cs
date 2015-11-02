@@ -19,6 +19,11 @@ public class MainScript : MonoBehaviour {
 	private bool isCharging = false; // is the ninja charging the jump?
 	private float minPoleGap = 1.5f; // min distance between two poles
 	private float maxPoleGap = 2.5f; // max distance between two poles 
+	private float maxPoleDistance = -5f;
+
+	private bool fadeout = false;
+	private float opacity = 1f;
+	public float fadeSpeed = 5f;
 
 	// function executed when the script is launched
 	
@@ -33,12 +38,18 @@ public class MainScript : MonoBehaviour {
 		// if the pole is not too far, then place it
 		if(posX<10f){
 			// adding the prefab to the stage
-			Instantiate(poleObject);
+			GameObject tempPole = Instantiate(poleObject);
+			//Instantiate(poleObject);
 			// position the pole prefab
-			poleObject.transform.position = new Vector2(posX,-1.5f-Random.value*2.5f);
+			if(posX < maxPoleDistance+minPoleGap)
+				posX = maxPoleDistance+minPoleGap;
+			if(posX > maxPoleDistance+maxPoleGap)
+				posX = maxPoleDistance+maxPoleGap;
+			tempPole.transform.position = new Vector2(posX,-1.5f-Random.value*2.5f);
+			maxPoleDistance = posX;
 			// determining next pole position
 			posX += minPoleGap+Random.value*(maxPoleGap-minPoleGap);
-			// try to place another pole
+			// try to place another pole\
 			placePole (posX);
 		}
 	}
@@ -52,13 +63,8 @@ public class MainScript : MonoBehaviour {
 			GameObject powerBar = Instantiate(powerBarObject) as GameObject;
 			// now the player is charging
 			isCharging = true;
-			// once the player is charging, check if there's enough poles
-			GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
-			float maxPoleDistance = 0;
-			foreach (GameObject pole in poles){
-				// looking for the rightmost pole
-				maxPoleDistance = Mathf.Max(maxPoleDistance,pole.transform.position.x);
-			}
+
+			findMaxPoleDist();
 			// if the rightmost pole is not too far, try to place another pole.
 			if(maxPoleDistance<10f){
 				placePole (maxPoleDistance+minPoleGap+Random.value*(maxPoleGap-minPoleGap));
@@ -77,10 +83,39 @@ public class MainScript : MonoBehaviour {
 			// find the object tagged as "Player" and send "Jump" message, with the proper force
 			GameObject.FindWithTag("Player").SendMessage("Jump",maxJumpForce*script.chargePower+50);
 		}
+
+		if (fadeout) {
+			GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
+			Color polecolor = new Color(255,255,255,opacity);
+			foreach (GameObject pole in poles){
+				// looking for the rightmost pole
+				pole.GetComponent<SpriteRenderer>().color = polecolor;
+			}
+			opacity-=fadeSpeed/255;
+			if(opacity <= 0){
+				fadeout = false;
+				Application.LoadLevel(2);
+			}
+		}
+	}
+
+	void findMaxPoleDist(){
+		// once the player is charging, check if there's enough poles
+		GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
+		maxPoleDistance = 0;
+		foreach (GameObject pole in poles){
+			// looking for the rightmost pole
+			maxPoleDistance = Mathf.Max(maxPoleDistance,pole.transform.position.x);
+		}
 	}
 
 	public void pointEarned(){
 		score++;
 		scoreText.text = "Score: " + score;
+	}
+
+	public void playerDied(){
+		fadeout = true;
+		PlayerPrefs.SetInt ("score", score);
 	}
 }

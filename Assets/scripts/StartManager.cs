@@ -4,10 +4,11 @@ using UnityEngine.UI;
 
 public class StartManager : MonoBehaviour {
 
-	public Text buttontext;
+	public Text[] buttontext;
 	public Button button;
+	public float fadeSpeed = 5;
 
-	private float opacity = 1.0f;
+	private float opacity = 1f;
 	private bool fading = false;
 	
 	// Update is called once per frame
@@ -19,11 +20,13 @@ public class StartManager : MonoBehaviour {
 			c.b = button.image.color.b;
 			c.a = opacity;
 			button.image.color = c;
-			opacity-=(float)5/255;
-			c.r = buttontext.color.r;
-			c.g = buttontext.color.g;
-			c.b = buttontext.color.b;
-			buttontext.color = c;
+			for(var i = 0; i < buttontext.Length; i++){
+				c.r = buttontext[i].color.r;
+				c.g = buttontext[i].color.g;
+				c.b = buttontext[i].color.b;
+				buttontext[i].color = c;
+			}
+			opacity-=fadeSpeed/255;
 			if(opacity <= 0)
 				playScene();
 		}
