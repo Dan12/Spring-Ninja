@@ -3,11 +3,21 @@ using System.Collections;
 
 public class NinjaScript : MonoBehaviour {
 
+	public Sprite stand_sprite;
+	public Sprite power_sprite;
+	public Sprite jump_sprite;
+	private SpriteRenderer spriteRenderer;
+
 	void Start () {
 		// placing the ninja
 		transform.position = new Vector2(-2.5f, 2f);
 		// tagging it as "Player"
 		//tag = "Player";
+
+		spriteRenderer = GetComponent<SpriteRenderer>();
+		if (spriteRenderer.sprite == null){
+			spriteRenderer.sprite = stand_sprite;
+		}
 	}
 	
 	void Update(){
@@ -27,12 +37,15 @@ public class NinjaScript : MonoBehaviour {
 			// send them all "scroll" message
 			pole.SendMessage("scroll");
 		}
+		spriteRenderer.sprite = jump_sprite;
 	}
 
 	void OnCollisionEnter2D(Collision2D collision){
 		if (gameObject.GetComponent<Rigidbody2D> ().velocity.y == 0) {
 			GameObject.FindGameObjectsWithTag ("GameEngine") [0].SendMessage ("pointEarned");
 			gameObject.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+			powering();
+			Invoke ("standing", 0.05f);
 		}
 		// get all objects tagged with "Pole"
 		GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
@@ -40,5 +53,13 @@ public class NinjaScript : MonoBehaviour {
 			// send them all "scroll" message
 			pole.SendMessage("stop");
 		}
+	}
+
+	public void standing(){
+		spriteRenderer.sprite = stand_sprite;
+	}
+
+	public void powering(){
+		spriteRenderer.sprite = power_sprite;
 	}
 }

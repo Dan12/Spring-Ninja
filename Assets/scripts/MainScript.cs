@@ -64,6 +64,8 @@ public class MainScript : MonoBehaviour {
 			// now the player is charging
 			isCharging = true;
 
+			GameObject.FindWithTag("Player").SendMessage("powering");
+
 			findMaxPoleDist();
 			// if the rightmost pole is not too far, try to place another pole.
 			if(maxPoleDistance<10f){
