@@ -25,6 +25,8 @@ public class MainScript : MonoBehaviour {
 	private float opacity = 1f;
 	public float fadeSpeed = 5f;
 
+	public GameObject explosion;
+
 	// function executed when the script is launched
 	
 	void Start () {
@@ -65,6 +67,7 @@ public class MainScript : MonoBehaviour {
 			isCharging = true;
 
 			GameObject.FindWithTag("Player").SendMessage("powering");
+			GameObject.FindWithTag("Player").SendMessage("poweringUpSound");
 
 			findMaxPoleDist();
 			// if the rightmost pole is not too far, try to place another pole.
@@ -117,7 +120,12 @@ public class MainScript : MonoBehaviour {
 	}
 
 	public void playerDied(){
-		fadeout = true;
+		GameObject tempexp = Instantiate (explosion);
 		PlayerPrefs.SetInt ("score", score);
+		Invoke("startFadeOut", 2.0f);
+	}
+
+	void startFadeOut(){
+		fadeout = true;
 	}
 }

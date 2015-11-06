@@ -8,6 +8,14 @@ public class NinjaScript : MonoBehaviour {
 	public Sprite jump_sprite;
 	private SpriteRenderer spriteRenderer;
 
+	public AudioClip jumpAudio;
+	public AudioClip landAudio;
+	public AudioClip powerAudio;
+	public AudioClip explosionAudio;
+	private AudioSource audioSource;
+
+	private bool dying = false;
+
 	void Start () {
 		// placing the ninja
 		transform.position = new Vector2(-2.5f, 2f);
@@ -18,13 +26,21 @@ public class NinjaScript : MonoBehaviour {
 		if (spriteRenderer.sprite == null){
 			spriteRenderer.sprite = stand_sprite;
 		}
+
+		audioSource = GetComponent<AudioSource>();
 	}
 	
 	void Update(){
 		// checking if the ninja falls down the stage, in this case restart the game
 		Vector2 stagePos = Camera.main.WorldToScreenPoint(transform.position);
-		if (stagePos.y < 0){
+		if (stagePos.y < 0 && !dying){
 			GameObject.FindGameObjectsWithTag ("GameEngine") [0].SendMessage ("playerDied");
+			audioSource.PlayOneShot(explosionAudio);
+			dying = true;
+			GetComponent<BoxCollider2D>().enabled = false;
+			GetComponent<Rigidbody2D> ().freezeRotation = false;
+			GetComponent<Rigidbody2D> ().velocity = new Vector2(0f, 10f);
+			GetComponent<Rigidbody2D> ().angularVelocity = 1000f;
 		}
 		transform.position = new Vector2(-2.5f,transform.position.y);
 	}
@@ -38,6 +54,8 @@ public class NinjaScript : MonoBehaviour {
 			pole.SendMessage("scroll");
 		}
 		spriteRenderer.sprite = jump_sprite;
+		audioSource.Stop ();
+		audioSource.PlayOneShot (jumpAudio);
 	}
 
 	void OnCollisionEnter2D(Collision2D collision){
@@ -57,9 +75,14 @@ public class NinjaScript : MonoBehaviour {
 
 	public void standing(){
 		spriteRenderer.sprite = stand_sprite;
+		audioSource.PlayOneShot (landAudio);
 	}
 
 	public void powering(){
 		spriteRenderer.sprite = power_sprite;
+	}
+
+	public void poweringUpSound(){
+		audioSource.PlayOneShot (powerAudio);
 	}
 }
