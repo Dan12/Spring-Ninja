@@ -19,5 +19,8 @@ public class PowerScript : MonoBehaviour {
 		transform.localScale = new Vector2(chargePower,1f);
 		// finally updating its position to give the feeling it's growing from left to right
 		transform.position = new Vector2(-3.0f+chargePower/2, 2.15f);
+
+		if(chargePower == 1f)
+			GameObject.FindGameObjectsWithTag ("GameEngine") [0].SendMessage ("invokeJump");
 	}
 }

@@ -18,7 +18,7 @@ public class NinjaScript : MonoBehaviour {
 
 	void Start () {
 		// placing the ninja
-		transform.position = new Vector2(-2.5f, 2f);
+		transform.position = new Vector2(-2.55f, 2f);
 		// tagging it as "Player"
 		//tag = "Player";
 
@@ -39,10 +39,12 @@ public class NinjaScript : MonoBehaviour {
 			dying = true;
 			GetComponent<BoxCollider2D>().enabled = false;
 			GetComponent<Rigidbody2D> ().freezeRotation = false;
-			GetComponent<Rigidbody2D> ().velocity = new Vector2(0f, 10f);
-			GetComponent<Rigidbody2D> ().angularVelocity = 1000f;
+			GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+			GetComponent<Rigidbody2D> ().AddForce(new Vector2(50f, 500f));
+			GetComponent<Rigidbody2D> ().angularVelocity = 800f;
 		}
-		transform.position = new Vector2(-2.5f,transform.position.y);
+		if(!dying)
+			transform.position = new Vector2(-2.55f,transform.position.y);
 	}
 	
 	void Jump(float jumpForce){

@@ -27,6 +27,8 @@ public class MainScript : MonoBehaviour {
 
 	public GameObject explosion;
 
+	private bool buttonDown = false;
+
 	// function executed when the script is launched
 	
 	void Start () {
@@ -62,7 +64,7 @@ public class MainScript : MonoBehaviour {
 		// mouse button down and ninja is not charging and not jumping/falling - that is its y velocity is zero?
 		if (Input.GetButtonDown("Fire1") && GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>().velocity.y==0 && !isCharging) {
 			// let's place the power bar on the stage
-			GameObject powerBar = Instantiate(powerBarObject) as GameObject;
+			Instantiate(powerBarObject);
 			// now the player is charging
 			isCharging = true;
 
@@ -74,20 +76,12 @@ public class MainScript : MonoBehaviour {
 			if(maxPoleDistance<10f){
 				placePole (maxPoleDistance+minPoleGap+Random.value*(maxPoleGap-minPoleGap));
 			}
+
+			buttonDown = true;
 		}
 		// mouse button released and the ninja is charging but not jumping/falling - that is its y velocity is zero?
-		if (Input.GetButtonUp("Fire1") && GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>().velocity.y==0 && isCharging) {
-			// player is no longer charging
-			isCharging = false;
-			// get the game object tagged as "Power"
-			GameObject powerObject = GameObject.FindWithTag("Power");
-			// inside the object tagged as "Power", get PowerScript script
-			PowerScript script = powerObject.GetComponent("PowerScript") as PowerScript;
-			// destoy the power bar
-			Destroy(GameObject.FindWithTag("Power"));
-			// find the object tagged as "Player" and send "Jump" message, with the proper force
-			GameObject.FindWithTag("Player").SendMessage("Jump",maxJumpForce*script.chargePower+50);
-		}
+		if (Input.GetButtonUp("Fire1") && GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>().velocity.y==0 && isCharging && buttonDown)
+			invokeJump();
 
 		if (fadeout) {
 			GameObject[] poles = GameObject.FindGameObjectsWithTag("Pole");
@@ -102,6 +96,20 @@ public class MainScript : MonoBehaviour {
 				Application.LoadLevel(2);
 			}
 		}
+	}
+
+	public void invokeJump(){
+		// player is no longer charging
+		isCharging = false;
+		// get the game object tagged as "Power"
+		GameObject powerObject = GameObject.FindWithTag("Power");
+		// inside the object tagged as "Power", get PowerScript script
+		PowerScript script = powerObject.GetComponent("PowerScript") as PowerScript;
+		// destoy the power bar
+		Destroy(GameObject.FindWithTag("Power"));
+		// find the object tagged as "Player" and send "Jump" message, with the proper force
+		GameObject.FindWithTag("Player").SendMessage("Jump",maxJumpForce*script.chargePower+50);
+		buttonDown = false;
 	}
 
 	void findMaxPoleDist(){
@@ -120,7 +128,7 @@ public class MainScript : MonoBehaviour {
 	}
 
 	public void playerDied(){
-		GameObject tempexp = Instantiate (explosion);
+		Instantiate (explosion);
 		PlayerPrefs.SetInt ("score", score);
 		Invoke("startFadeOut", 2.0f);
 	}
